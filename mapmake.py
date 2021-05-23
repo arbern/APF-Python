@@ -1,18 +1,18 @@
 import numpy as np
 from PIL import Image
 """
-10 = Water Tile
-4 = Forest Tile
+0 = Capitol tile
+1 = Road Tile
+2 = Plains Tile
 3 = Dirt Tile
+4 = Forest Tile
+5 = Desert Tile
+6 = Snow Tile
 7 = Mountain lvl 1 Tile
 8 = Mountain lvl 2 Tile
-5 = Desert Tile
-11 = Lava Tile
-2 = Plains Tile
 9 = Snow Mountain Tile
-1 = Road Tile
-6 = Snow Tile
-0 = Capitol tile
+10 = Water Tile
+11 = Lava Tile
 12 = Ice Tile
 13 = Ice lvl 2 Tile 
 
