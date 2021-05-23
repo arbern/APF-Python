@@ -42,16 +42,12 @@ with open('agoniaMap2.txt') as f:
         array_of_tiles = np.vstack((array_of_tiles, np.array(list(map(int, line.split())))))
 
 
-with open('Test.py', 'r')as f:
-    for line in f:
-        f.write(array_of_tiles)
-
 simple_map = [BLACK, YELLOW, GREEN, BROWN, DARK_GREEN, LIGHT_YELLOW, WHITE, DARK_GREY, GREY, WHITE, BLUE, RED, LIGHT_BLUE, ICE_BLUE]
 
 rgb_arr = np.zeros((array_of_tiles.shape[1], array_of_tiles.shape[0], 3))
 
-for i, row in enumerate(array_of_tiles):
-    for j, col in enumerate(row):
+for j, row in enumerate(array_of_tiles):
+    for i, col in enumerate(row):
         rgb_arr[j][i][0] = simple_map[col][0]
         rgb_arr[j][i][1] = simple_map[col][1]
         rgb_arr[j][i][2] = simple_map[col][2]
