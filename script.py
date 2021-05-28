@@ -49,7 +49,7 @@ def step_cost(current, neighbour, mvp_mods):
     if current.row==neighbour.row or current.column == neighbour.column: # stright step
         return straight_step_cost
     else:
-        return int(round(1.41 * straight_step_cost))
+        return int(1.414 * straight_step_cost)
 
 
 def heuristic_estimate_of_distance_between(start, end):

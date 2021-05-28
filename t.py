@@ -14,9 +14,9 @@ class Tile:
         self.prev = None
     def __str__(self):
         if self.prev == None:
-            return "Tile:(%s,%s) %s cost:%s f_score:%s prev: None " % ( self.column, self.row, self.terrain, self.g_score, self.f_score)
+            return "Tile:(%s,%s) %s cost:%s f_score:%s prev: None " % ( self.column +1, self.row +1, self.terrain, self.g_score, self.f_score)
         else:
-            return "Tile:(%s,%s) %s cost:%s f_score:%s prev: (%s,%s) " % (self.column, self.row, self.terrain, self.g_score, self.f_score, self.prev.row, self.prev.column)
+            return "Tile:(%s,%s) %s cost:%s f_score:%s prev: (%s,%s)step cost:%s " % (self.column +1, self.row +1, self.terrain, self.g_score, self.f_score, self.prev.column +1, self.prev.row +1, self.g_score-self.prev.g_score)
 
     def __lt__(self, other):
         return self.f_score < other.f_score
