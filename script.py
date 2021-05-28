@@ -44,6 +44,16 @@ def get_straight_step_cost(terrain, mvp_mods):
     return myDict.get(mvp_mods.tribe)[terrain] # TODO other modifiers
 
 
+def build_path_to(e_tile):
+    path=[]
+    current_tile = e_tile
+    path.append(current_tile)
+    while current_tile.prev != None:
+        current_tile=current_tile.prev
+        path.append(current_tile)
+    return path
+
+
 def step_cost(current, neighbour, mvp_mods):
     straight_step_cost = get_straight_step_cost(neighbour.terrain, mvp_mods)
     if current.row==neighbour.row or current.column == neighbour.column: # stright step
@@ -60,14 +70,6 @@ def heuristic_estimate_of_distance_between(start, end):
     number_of_diagonal_steps = min(x_diff, y_diff)
     number_of_straight_steps = abs(x_diff-y_diff)
     return number_of_diagonal_steps * lowest_diagonal_step_cost + number_of_straight_steps * lowest_straight_step_cost
-
-
-def print_path_to(e_tile):
-    if e_tile.prev == None:
-        print(e_tile)
-        return
-    print("Calling %s" % (e_tile.prev))
-    return print_path_to(e_tile.prev)
 
 
 def find_path(s_tile, e_tile, agoniasMap, mvp_mods):
@@ -87,8 +89,7 @@ def find_path(s_tile, e_tile, agoniasMap, mvp_mods):
             current = heapq.heappop(open_set)
             if current.is_same(e_tile):
                 print("Found path to %s" % (e_tile))
-                print_path_to(e_tile)
-                break
+                return build_path_to(e_tile)
             current.open = 0 # mark as reamoved from open
             current.closed = 1 # mark as closed
             neighbours_of_current = get_neigbours(current, agoniasMap)
@@ -124,4 +125,8 @@ mvp_mods = t.MvpMod("kiith", None, None)
 star_tile = agoniasMap.map_of_tiles[171,256]
 end_tile = agoniasMap.map_of_tiles[147,239]
 
-find_path(star_tile, end_tile, agoniasMap, mvp_mods)
+path = find_path(star_tile, end_tile, agoniasMap, mvp_mods)
+print("Move cost %s" % (path[0].g_score))
+print("Steps:")
+for step in path:
+    print(step)
