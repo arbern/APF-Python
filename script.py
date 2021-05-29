@@ -1,6 +1,7 @@
 import numpy as np
 import heapq
 import t
+from PIL import Image
 
 # Creating dictionary
 # key will be tribe
@@ -44,12 +45,14 @@ def get_straight_step_cost(terrain, mvp_mods):
     return myDict.get(mvp_mods.tribe)[terrain] # TODO other modifiers
 
 
-def build_path_to(e_tile):
+def build_and_mark_path_to(e_tile):
     path=[]
     current_tile = e_tile
+    current_tile.is_on_path=1
     path.append(current_tile)
     while current_tile.prev != None:
         current_tile=current_tile.prev
+        current_tile.is_on_path=1
         path.append(current_tile)
     return path
 
@@ -89,7 +92,7 @@ def find_path(s_tile, e_tile, agoniasMap, mvp_mods):
             current = heapq.heappop(open_set)
             if current.is_same(e_tile):
                 print("Found path to %s" % (e_tile))
-                return build_path_to(e_tile)
+                return build_and_mark_path_to(e_tile)
             current.open = 0 # mark as reamoved from open
             current.closed = 1 # mark as closed
             neighbours_of_current = get_neigbours(current, agoniasMap)
@@ -117,6 +120,48 @@ def find_path(s_tile, e_tile, agoniasMap, mvp_mods):
         print("No path found")
 
     pass
+
+def find_path_bounds(path):
+    first = path[0]
+    bonds = [(first.row,first.row),(first.column,first.column)]
+    for tile in path:
+        if bonds[0][0] > tile.row:
+            bonds[0] = (tile.row, bonds [0][1])
+        if bonds[0][1] < tile.row:
+            bonds[0] = (bonds [0][0],tile.row)
+        if bonds[1][0] > tile.column:
+            bonds[1] = (tile.column , bonds[1][1])
+        if bonds[1][1] < tile.column:
+            bonds[1] = (bonds[1][0],tile.column)
+
+    return bonds
+
+
+def do_magic(path):
+    bonds = find_path_bounds(path)
+
+    min_x=bonds[0][0]-1
+    max_x=bonds[0][1]+2
+    min_y=bonds[1][0]-1
+    max_y=bonds[1][1]+2
+
+    rows = []
+    for row in range (min_x,max_x):
+        columns_of_row = []
+        for column in range (min_y,max_y):
+            columns_of_row.append(agoniasMap.map_of_tiles[row,column].to_img())
+        rows.append(columns_of_row)
+
+    pixels = np.zeros(((max_x-min_x)*7, (max_y-min_y)*7, 3))
+    for ii in range((max_x-min_x)*7):
+        for jj in range ((max_y-min_y)*7):
+            for zz in range(3):
+                tt = rows[int(ii/7)][int(jj/7)]
+                pixels[ii][jj][zz] = tt[ii%7][jj%7][zz]
+
+    return pixels
+
+
 mvp_mods = t.MvpMod("kiith", None, None)
 #TODO ingame coordinast must be modified by -1 as arrays are indexed from 0
 #TODO also ingame coords in oposit order row, coll then here
@@ -126,7 +171,7 @@ star_tile = agoniasMap.map_of_tiles[171,256]
 end_tile = agoniasMap.map_of_tiles[147,239]
 
 path = find_path(star_tile, end_tile, agoniasMap, mvp_mods)
-print("Move cost %s" % (path[0].g_score))
-print("Steps:")
-for step in path:
-    print(step)
+pixels = do_magic(path)
+
+img = Image.fromarray(np.uint8(pixels), 'RGB')
+img.show()
